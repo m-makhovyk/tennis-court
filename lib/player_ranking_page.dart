@@ -38,10 +38,8 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No players found.'));
-                } else {
-                  final players = snapshot.data!;
+                } else if (snapshot.data case final players?
+                    when players.isNotEmpty) {
                   return ListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: players.length,
@@ -49,6 +47,8 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
                       return _PlayerRow(player: players[index]);
                     },
                   );
+                } else {
+                  return const Center(child: Text('No players found.'));
                 }
               },
             ),
