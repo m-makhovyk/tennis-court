@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const PlayerRankingPage(title: 'Flutter Demo Home Page'),
+      home: const PlayerRankingPage(title: 'Tennis Court'),
     );
   }
 }
