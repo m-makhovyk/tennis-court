@@ -46,7 +46,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: players.length,
                     itemBuilder: (context, index) {
-                      return PlayerRow(player: players[index]);
+                      return _PlayerRow(player: players[index]);
                     },
                   );
                 }
@@ -59,10 +59,10 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   }
 }
 
-class PlayerRow extends StatelessWidget {
+class _PlayerRow extends StatelessWidget {
   final Player player;
 
-  const PlayerRow({super.key, required this.player});
+  const _PlayerRow({super.key, required this.player});
 
   @override
   Widget build(BuildContext context) {
