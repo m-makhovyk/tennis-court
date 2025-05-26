@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'player_model.dart';
+import 'player_service.dart';
 
 class MacOSScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -40,6 +41,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late Future<List<Player>> _playersFuture;
+  final PlayerService _playerService = PlayerService();
+
+  @override
+  void initState() {
+    super.initState();
+    _playersFuture = _playerService.getPlayers();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,11 +60,25 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: dummyPlayers.length,
-              itemBuilder: (context, index) {
-                return PlayerRow(player: dummyPlayers[index]);
+            child: FutureBuilder<List<Player>>(
+              future: _playersFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No players found.'));
+                } else {
+                  final players = snapshot.data!;
+                  return ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: players.length,
+                    itemBuilder: (context, index) {
+                      return PlayerRow(player: players[index]);
+                    },
+                  );
+                }
               },
             ),
           ),
