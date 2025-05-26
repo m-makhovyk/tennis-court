@@ -1,8 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:tennis_court/player_ranking_page.dart';
-import 'player_model.dart';
-import 'player_service.dart';
 
 class MacOSScrollBehavior extends MaterialScrollBehavior {
   @override
