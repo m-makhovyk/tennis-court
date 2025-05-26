@@ -73,7 +73,7 @@ class _PlayerRow extends StatelessWidget {
       ),
       title: Text(player.name),
       subtitle: Text('Points: ${player.points}'),
-      trailing: Text(player.flag, style: const TextStyle(fontSize: 24)),
+      trailing: Text(player.countryAcr, style: const TextStyle(fontSize: 24)),
     );
   }
 }

@@ -2,16 +2,24 @@ class Player {
   final String id;
   final String name;
   final int rank;
-  final String flag;
+  final String countryAcr;
   final int points;
-  final String? avatarUrl;
 
   Player({
     required this.id,
     required this.name,
     required this.rank,
-    required this.flag,
+    required this.countryAcr,
     required this.points,
-    this.avatarUrl,
   });
+
+  factory Player.fromJson(Map<String, dynamic> json) {
+    return Player(
+      id: json['player']['id'].toString(),
+      name: json['player']['name'],
+      rank: json['position'],
+      countryAcr: json['player']['countryAcr'],
+      points: json['point'],
+    );
+  }
 }

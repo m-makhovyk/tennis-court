@@ -1,69 +1,30 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'player_model.dart';
 
 class PlayerService {
+  static const String _baseUrl =
+      'https://tennis-api-atp-wta-itf.p.rapidapi.com';
+  static String get _apiKey => dotenv.env['RAPIDAPI_KEY'] ?? '';
+  static const String _host = 'tennis-api-atp-wta-itf.p.rapidapi.com';
+
   Future<List<Player>> getPlayers() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
-    return [
-      Player(
-        id: "1",
-        name: 'Jannik Sinner',
-        rank: 1,
-        flag: '🇮🇹',
-        points: 10380,
-      ),
-      Player(
-        id: "2",
-        name: 'Carlos Alcaraz',
-        rank: 2,
-        flag: '🇪🇸',
-        points: 8850,
-      ),
-      Player(
-        id: "3",
-        name: 'Alexander Zverev',
-        rank: 3,
-        flag: '🇩🇪',
-        points: 7285,
-      ),
-      Player(
-        id: "4",
-        name: 'Taylor Fritz',
-        rank: 4,
-        flag: '🇺🇸',
-        points: 4675,
-      ),
-      Player(id: "5", name: 'Jack Draper', rank: 5, flag: '🇬🇧', points: 4610),
-      Player(
-        id: "6",
-        name: 'Novak Djokovic',
-        rank: 6,
-        flag: '🇷🇸',
-        points: 4230,
-      ),
-      Player(
-        id: "7",
-        name: 'Lorenzo Musetti',
-        rank: 7,
-        flag: '🇮🇹',
-        points: 3860,
-      ),
-      Player(id: "8", name: 'Casper Ruud', rank: 8, flag: '🇳🇴', points: 3655),
-      Player(
-        id: "9",
-        name: 'Alex de Minaur',
-        rank: 9,
-        flag: '🇦🇺',
-        points: 3635,
-      ),
-      Player(
-        id: "10",
-        name: 'Holger Rune',
-        rank: 10,
-        flag: '🇩🇰',
-        points: 3440,
-      ),
-    ];
+    final response = await http.get(
+      Uri.parse('$_baseUrl/tennis/v2/atp/ranking/singles/'),
+      headers: {'x-rapidapi-host': _host, 'x-rapidapi-key': _apiKey},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('API Error: ${response.statusCode} - ${response.body}');
+    }
+
+    final Map<String, dynamic> jsonData = json.decode(response.body);
+    final List<dynamic> playersData = jsonData['data'];
+
+    return playersData
+        .map((playerJson) => Player.fromJson(playerJson))
+        .toList();
   }
 }
