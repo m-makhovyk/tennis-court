@@ -40,11 +40,19 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.data case final players?
                     when players.isNotEmpty) {
-                  return ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: players.length,
-                    itemBuilder: (context, index) {
-                      return _PlayerRow(player: players[index]);
+                  return RefreshIndicator(
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: players.length,
+                      itemBuilder: (context, index) {
+                        return _PlayerRow(player: players[index]);
+                      },
+                    ),
+                    onRefresh: () async {
+                      setState(() {
+                        _playersFuture = _playerService.getPlayers();
+                      });
+                      await _playersFuture;
                     },
                   );
                 } else {
