@@ -36,35 +36,9 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
               future: _playersFuture,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return _buildErrorView(snapshot.error.toString());
                 } else {
-                  final players = snapshot.data ?? [];
-                  return Stack(
-                    children: [
-                      RefreshIndicator(
-                        child: ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: players.length,
-                          itemBuilder: (context, index) {
-                            return _PlayerRow(player: players[index]);
-                          },
-                        ),
-                        onRefresh: () async {
-                          setState(() {
-                            _isRefreshing = true;
-                            _playersFuture = _playerService.getPlayers();
-                          });
-                          await _playersFuture;
-                          setState(() {
-                            _isRefreshing = false;
-                          });
-                        },
-                      ),
-                      if (!_isRefreshing &&
-                          snapshot.connectionState == ConnectionState.waiting)
-                        const Center(child: CircularProgressIndicator()),
-                    ],
-                  );
+                  return _buildPlayersList(snapshot);
                 }
               },
             ),
@@ -73,15 +47,33 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
       ),
     );
   }
-}
 
-class _PlayerRow extends StatelessWidget {
-  final Player player;
+  Widget _buildErrorView(String error) {
+    return Center(child: Text('Error: $error'));
+  }
 
-  const _PlayerRow({super.key, required this.player});
+  Widget _buildPlayersList(AsyncSnapshot<List<Player>> snapshot) {
+    final players = snapshot.data ?? [];
+    return Stack(
+      children: [
+        RefreshIndicator(
+          onRefresh: _refreshPlayers,
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: players.length,
+            itemBuilder: (context, index) {
+              return _buildPlayerRow(players[index]);
+            },
+          ),
+        ),
+        if (!_isRefreshing &&
+            snapshot.connectionState == ConnectionState.waiting)
+          const Center(child: CircularProgressIndicator()),
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPlayerRow(Player player) {
     return ListTile(
       leading: Text(
         player.rank.toString(),
@@ -91,5 +83,16 @@ class _PlayerRow extends StatelessWidget {
       subtitle: Text('Points: ${player.points}'),
       trailing: Text(player.countryAcr, style: const TextStyle(fontSize: 24)),
     );
+  }
+
+  Future<void> _refreshPlayers() async {
+    setState(() {
+      _isRefreshing = true;
+      _playersFuture = _playerService.getPlayers();
+    });
+    await _playersFuture;
+    setState(() {
+      _isRefreshing = false;
+    });
   }
 }
