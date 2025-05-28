@@ -19,7 +19,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   @override
   void initState() {
     super.initState();
-    _playersFuture = _playerService.getPlayers();
+    _loadPlayers();
   }
 
   @override
@@ -35,7 +35,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
             child: FutureBuilder<List<Player>>(
               future: _playersFuture,
               builder: (context, snapshot) {
-                if (snapshot.hasError) {
+                if (snapshot.hasError && snapshot.data == null) {
                   return _buildErrorView(snapshot.error.toString());
                 } else {
                   return _buildPlayersList(snapshot);
@@ -49,7 +49,19 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   }
 
   Widget _buildErrorView(String error) {
-    return Center(child: Text('Error: $error'));
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Error: $error'),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _loadPlayers,
+            child: const Text('Try Again'),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildPlayersList(AsyncSnapshot<List<Player>> snapshot) {
@@ -85,14 +97,26 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     );
   }
 
+  void _loadPlayers() {
+    setState(() {
+      _playersFuture = _playerService.getPlayers();
+    });
+  }
+
   Future<void> _refreshPlayers() async {
     setState(() {
       _isRefreshing = true;
       _playersFuture = _playerService.getPlayers();
     });
-    await _playersFuture;
-    setState(() {
-      _isRefreshing = false;
-    });
+    try {
+      await _playersFuture;
+    } catch (e) {
+      // Exception is already handled by FutureBuilder
+      // Just ensure we reset the refreshing state
+    } finally {
+      setState(() {
+        _isRefreshing = false;
+      });
+    }
   }
 }
