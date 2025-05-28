@@ -14,6 +14,7 @@ class PlayerRankingPage extends StatefulWidget {
 class _PlayerRankingPageState extends State<PlayerRankingPage> {
   late Future<List<Player>> _playersFuture;
   final PlayerService _playerService = PlayerService();
+  bool _isRefreshing = false;
 
   @override
   void initState() {
@@ -34,29 +35,36 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
             child: FutureBuilder<List<Player>>(
               future: _playersFuture,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
+                if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.data case final players?
-                    when players.isNotEmpty) {
-                  return RefreshIndicator(
-                    child: ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: players.length,
-                      itemBuilder: (context, index) {
-                        return _PlayerRow(player: players[index]);
-                      },
-                    ),
-                    onRefresh: () async {
-                      setState(() {
-                        _playersFuture = _playerService.getPlayers();
-                      });
-                      await _playersFuture;
-                    },
-                  );
                 } else {
-                  return const Center(child: Text('No players found.'));
+                  final players = snapshot.data ?? [];
+                  return Stack(
+                    children: [
+                      RefreshIndicator(
+                        child: ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: players.length,
+                          itemBuilder: (context, index) {
+                            return _PlayerRow(player: players[index]);
+                          },
+                        ),
+                        onRefresh: () async {
+                          setState(() {
+                            _isRefreshing = true;
+                            _playersFuture = _playerService.getPlayers();
+                          });
+                          await _playersFuture;
+                          setState(() {
+                            _isRefreshing = false;
+                          });
+                        },
+                      ),
+                      if (!_isRefreshing &&
+                          snapshot.connectionState == ConnectionState.waiting)
+                        const Center(child: CircularProgressIndicator()),
+                    ],
+                  );
                 }
               },
             ),
