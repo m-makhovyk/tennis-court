@@ -12,8 +12,9 @@ class PlayerRankingPage extends StatefulWidget {
 }
 
 class _PlayerRankingPageState extends State<PlayerRankingPage> {
-  late Future<List<Player>> _playersFuture;
+  List<Player> _players = [];
   final PlayerService _playerService = PlayerService();
+  bool isLoading = false;
   bool _isRefreshing = false;
 
   @override
@@ -29,43 +30,11 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(widget.title),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder<List<Player>>(
-              future: _playersFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasError && snapshot.data == null) {
-                  return _buildErrorView(snapshot.error.toString());
-                } else {
-                  return _buildPlayersList(snapshot);
-                }
-              },
-            ),
-          ),
-        ],
-      ),
+      body: Column(children: [Expanded(child: _buildPlayersList(_players))]),
     );
   }
 
-  Widget _buildErrorView(String error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Error: $error'),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _loadPlayers,
-            child: const Text('Try Again'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPlayersList(AsyncSnapshot<List<Player>> snapshot) {
-    final players = snapshot.data ?? [];
+  Widget _buildPlayersList(List<Player> players) {
     return Stack(
       children: [
         RefreshIndicator(
@@ -78,8 +47,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
             },
           ),
         ),
-        if (!_isRefreshing &&
-            snapshot.connectionState == ConnectionState.waiting)
+        if (isLoading && !_isRefreshing)
           const Center(child: CircularProgressIndicator()),
       ],
     );
@@ -99,24 +67,29 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
 
   void _loadPlayers() {
     setState(() {
-      _playersFuture = _playerService.getPlayers();
+      isLoading = true;
     });
+    _playerService
+        .getPlayers()
+        .then((players) {
+          setState(() {
+            _players = players;
+            isLoading = false;
+            _isRefreshing = false;
+          });
+        })
+        .catchError((error) {
+          setState(() {
+            isLoading = false;
+            _isRefreshing = false;
+          });
+        });
   }
 
   Future<void> _refreshPlayers() async {
     setState(() {
       _isRefreshing = true;
-      _playersFuture = _playerService.getPlayers();
     });
-    try {
-      await _playersFuture;
-    } catch (e) {
-      // Exception is already handled by FutureBuilder
-      // Just ensure we reset the refreshing state
-    } finally {
-      setState(() {
-        _isRefreshing = false;
-      });
-    }
+    _loadPlayers();
   }
 }
