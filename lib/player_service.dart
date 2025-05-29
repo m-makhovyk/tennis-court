@@ -6,10 +6,10 @@ import 'player_model.dart';
 class PlayerService {
   static const String _baseUrl = 'https://matchstat.com/tennis/api2';
 
-  Future<List<Player>> getPlayers() async {
+  Future<List<Player>> getPlayers(int page) async {
     final response = await http.get(
       Uri.parse(
-        '$_baseUrl/ranking/atp/?date=26.05.2025&group=singles&page=0&includeAll=true',
+        '$_baseUrl/ranking/atp/?date=26.05.2025&group=singles&page=$page&includeAll=true',
       ),
     );
 

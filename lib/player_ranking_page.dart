@@ -12,15 +12,26 @@ class PlayerRankingPage extends StatefulWidget {
 }
 
 class _PlayerRankingPageState extends State<PlayerRankingPage> {
-  List<Player> _players = [];
+  final List<Player> _players = [];
   final PlayerService _playerService = PlayerService();
   bool isLoading = false;
   bool _isRefreshing = false;
+  int _page = 0;
+  final int _maxPage = 8; // API limited to 8 pages
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _loadPlayers();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,6 +52,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
           onRefresh: _refreshPlayers,
           child: ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
+            controller: _scrollController,
             itemCount: players.length,
             itemBuilder: (context, index) {
               return _buildPlayerRow(players[index]);
@@ -71,12 +83,13 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     });
 
     try {
-      final players = await _playerService.getPlayers();
+      final players = await _playerService.getPlayers(_page);
 
       setState(() {
-        _players = players;
+        _players.addAll(players);
         isLoading = false;
         _isRefreshing = false;
+        _page++;
       });
     } catch (error) {
       setState(() {
@@ -98,8 +111,19 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
 
   Future<void> _refreshPlayers() async {
     setState(() {
+      _page = 0;
+      _players.clear();
       _isRefreshing = true;
     });
     await _loadPlayers();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !isLoading &&
+        _page < _maxPage) {
+      _loadPlayers();
+    }
   }
 }
