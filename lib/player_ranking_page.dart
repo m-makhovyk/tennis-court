@@ -65,31 +65,41 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     );
   }
 
-  void _loadPlayers() {
+  Future<void> _loadPlayers() async {
     setState(() {
       isLoading = true;
     });
-    _playerService
-        .getPlayers()
-        .then((players) {
-          setState(() {
-            _players = players;
-            isLoading = false;
-            _isRefreshing = false;
-          });
-        })
-        .catchError((error) {
-          setState(() {
-            isLoading = false;
-            _isRefreshing = false;
-          });
-        });
+
+    try {
+      final players = await _playerService.getPlayers();
+
+      setState(() {
+        _players = players;
+        isLoading = false;
+        _isRefreshing = false;
+      });
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+        _isRefreshing = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $error'),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(label: 'Retry', onPressed: _loadPlayers),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _refreshPlayers() async {
     setState(() {
       _isRefreshing = true;
     });
-    _loadPlayers();
+    await _loadPlayers();
   }
 }
