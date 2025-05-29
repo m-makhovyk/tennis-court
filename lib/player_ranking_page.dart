@@ -119,8 +119,8 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent &&
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
         !isLoading &&
         _page < _maxPage) {
       _loadPlayers();
