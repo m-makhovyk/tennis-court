@@ -19,6 +19,8 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   int _page = 0;
   final int _maxPage = 8; // API limited to 8 pages
 
+  bool get canLoadMore => _page < _maxPage;
+
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -53,13 +55,25 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
           child: ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
             controller: _scrollController,
-            itemCount: players.length,
+            itemCount:
+                _players.length + (canLoadMore && players.isNotEmpty ? 1 : 0),
             itemBuilder: (context, index) {
-              return _buildPlayerRow(players[index]);
+              if (index >= _players.length) {
+                return SizedBox(
+                  height: 80,
+                  child: const Center(
+                    child: Text(
+                      'Loading more...',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                );
+              }
+              return _buildPlayerRow(_players[index]);
             },
           ),
         ),
-        if (isLoading && !_isRefreshing)
+        if (isLoading && !_isRefreshing && players.isEmpty)
           const Center(child: CircularProgressIndicator()),
       ],
     );
@@ -122,7 +136,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent - 200 &&
         !isLoading &&
-        _page < _maxPage) {
+        canLoadMore) {
       _loadPlayers();
     }
   }
