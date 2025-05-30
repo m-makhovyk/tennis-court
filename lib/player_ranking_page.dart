@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_court/player_model.dart';
-import 'package:tennis_court/player_service.dart';
+import 'package:tennis_court/services/player_service.dart';
 import 'package:tennis_court/services/country_flag_service.dart';
 
 class PlayerRankingPage extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'player_model.dart';
+import '../player_model.dart';
 
 class PlayerService {
   static const String _baseUrl = 'https://matchstat.com/tennis/api2';
