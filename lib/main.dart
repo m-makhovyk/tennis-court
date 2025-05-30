@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tennis_court/player_ranking_page.dart';
+import 'package:tennis_court/services/country_flag_service.dart';
 
 class MacOSScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -13,7 +14,9 @@ class MacOSScrollBehavior extends MaterialScrollBehavior {
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await CountryFlagService().loadCountryFlags();
   runApp(const MyApp());
 }
 

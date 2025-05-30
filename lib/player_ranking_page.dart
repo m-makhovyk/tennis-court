@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_court/player_model.dart';
 import 'package:tennis_court/player_service.dart';
+import 'package:tennis_court/services/country_flag_service.dart';
 
 class PlayerRankingPage extends StatefulWidget {
   const PlayerRankingPage({super.key, required this.title});
@@ -80,6 +81,8 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   }
 
   Widget _buildPlayerRow(Player player) {
+    final flag = CountryFlagService().getFlagForCountry(player.countryAcr);
+
     return ListTile(
       leading: Text(
         player.rank.toString(),
@@ -87,7 +90,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
       ),
       title: Text(player.name),
       subtitle: Text('Points: ${player.points}'),
-      trailing: Text(player.countryAcr, style: const TextStyle(fontSize: 24)),
+      trailing: Text(flag, style: const TextStyle(fontSize: 24)),
     );
   }
 
