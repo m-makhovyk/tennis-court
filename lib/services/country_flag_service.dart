@@ -33,6 +33,9 @@ class CountryFlagService {
   }
 
   String getFlagForCountry(String countryCode) {
+    if (countryCode == 'RUS' || countryCode == 'BLR') {
+      return '🏳️';
+    }
     return _countryFlags[countryCode.toUpperCase()] ?? '';
   }
 
