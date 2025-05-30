@@ -88,9 +88,15 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
         player.rank.toString(),
         style: Theme.of(context).textTheme.titleMedium,
       ),
-      title: Text(player.name),
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(flag, style: const TextStyle(fontSize: 28)),
+          const SizedBox(width: 8),
+          Text(player.name, style: Theme.of(context).textTheme.titleMedium),
+        ],
+      ),
       subtitle: Text('Points: ${player.points}'),
-      trailing: Text(flag, style: const TextStyle(fontSize: 24)),
     );
   }
 
