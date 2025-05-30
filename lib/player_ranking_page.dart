@@ -18,7 +18,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   bool isLoading = false;
   bool _isRefreshing = false;
   int _page = 0;
-  final int _maxPage = 8; // API limited to 8 pages
+  final int _maxPage = 9; // API limited to 9 pages
 
   bool get canLoadMore => _page < _maxPage;
 
