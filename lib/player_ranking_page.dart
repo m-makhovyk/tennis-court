@@ -84,9 +84,22 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     final flag = CountryFlagService().getFlagForCountry(player.countryAcr);
 
     return ListTile(
-      leading: Text(
-        player.rank.toString(),
-        style: Theme.of(context).textTheme.titleMedium,
+      leading: SizedBox(
+        width: 70,
+        child: Row(
+          children: [
+            Text(
+              player.rank.toString(),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child:
+                  _buildRankChangeWidget(player.weeklyPositionChange) ??
+                  const SizedBox(),
+            ),
+          ],
+        ),
       ),
       title: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,6 +110,33 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
         ],
       ),
       subtitle: Text('Points: ${player.points}'),
+    );
+  }
+
+  Widget? _buildRankChangeWidget(int change) {
+    if (change == 0) return null;
+
+    final isPositive = change > 0;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          isPositive ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+          color: isPositive ? Colors.green : Colors.red,
+          size: 24,
+        ),
+        Transform.translate(
+          offset: const Offset(0, -8),
+          child: Text(
+            '${isPositive ? '+' : ''}$change',
+            style: TextStyle(
+              color: isPositive ? Colors.green : Colors.red,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
