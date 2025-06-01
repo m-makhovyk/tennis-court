@@ -80,6 +80,19 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     );
   }
 
+  String _formatPlayerName(String fullName) {
+    final parts = fullName.trim().split(' ');
+    if (parts.length == 1) return fullName;
+
+    final surname = parts.last;
+    final initials = parts
+        .sublist(0, parts.length - 1)
+        .map((part) => '${part[0].toUpperCase()}.')
+        .join(' ');
+
+    return '$initials $surname';
+  }
+
   Widget _buildPlayerRow(Player player) {
     final flag = CountryFlagService().getFlagForCountry(player.countryAcr);
 
@@ -112,7 +125,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    player.name,
+                    _formatPlayerName(player.name),
                     style: Theme.of(context).textTheme.titleMedium,
                     overflow: TextOverflow.ellipsis,
                   ),
