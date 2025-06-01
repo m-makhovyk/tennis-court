@@ -17,14 +17,26 @@ class SegmentedToggle<T extends Enum> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final optionWidth = 70.0;
-    final totalWidth = optionWidth * values.length;
+    // Measure text widths
+    final textStyle = TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
+
+    final optionWidths = values
+        .map(
+          (value) =>
+              _measureTextWidth(labelBuilder(value), textStyle) +
+              32, // 32 for padding
+        )
+        .toList();
+
+    final totalWidth = optionWidths.reduce((a, b) => a + b);
     final selectedIndex = values.indexOf(selectedValue);
 
-    // Calculate alignment: -1.0 (left) to 1.0 (right)
-    final alignment = values.length == 1
-        ? Alignment.center
-        : Alignment(-1.0 + (2.0 * selectedIndex / (values.length - 1)), 0.0);
+    // Calculate position for animated background
+    double backgroundLeft = 0;
+    for (int i = 0; i < selectedIndex; i++) {
+      backgroundLeft += optionWidths[i];
+    }
+    backgroundLeft += 2; // Margin offset
 
     return SizedBox(
       width: totalWidth,
@@ -36,14 +48,14 @@ class SegmentedToggle<T extends Enum> extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            AnimatedAlign(
+            AnimatedPositioned(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              alignment: alignment,
+              left: backgroundLeft,
+              top: 2,
               child: Container(
-                width: optionWidth - 4,
+                width: optionWidths[selectedIndex] - 4,
                 height: 40,
-                margin: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Theme.of(context).colorScheme.primary,
@@ -59,12 +71,13 @@ class SegmentedToggle<T extends Enum> extends StatelessWidget {
             ),
             Row(
               children: [
-                ...values.map(
-                  (value) => _buildToggleOption(
+                ...values.asMap().entries.map(
+                  (entry) => _buildToggleOption(
                     context,
-                    value,
-                    optionWidth,
-                    isSelected: selectedValue == value,
+                    entry.value,
+                    optionWidths[entry.key],
+                    textStyle,
+                    isSelected: selectedValue == entry.value,
                   ),
                 ),
               ],
@@ -75,10 +88,20 @@ class SegmentedToggle<T extends Enum> extends StatelessWidget {
     );
   }
 
+  double _measureTextWidth(String text, TextStyle style) {
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    return textPainter.width;
+  }
+
   Widget _buildToggleOption(
     BuildContext context,
     T value,
-    double width, {
+    double width,
+    TextStyle textStyle, {
     required bool isSelected,
   }) {
     return GestureDetector(
@@ -90,12 +113,10 @@ class SegmentedToggle<T extends Enum> extends StatelessWidget {
         alignment: Alignment.center,
         child: Text(
           labelBuilder(value),
-          style: TextStyle(
+          style: textStyle.copyWith(
             color: isSelected
                 ? Theme.of(context).colorScheme.onPrimary
                 : Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
           ),
         ),
       ),
