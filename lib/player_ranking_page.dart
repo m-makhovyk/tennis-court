@@ -49,48 +49,91 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   }
 
   Widget _buildPlayersList(List<Player> players) {
-    return Stack(
+    return Column(
       children: [
-        RefreshIndicator(
-          onRefresh: _refreshPlayers,
-          child: ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            controller: _scrollController,
-            itemCount:
-                _players.length + (canLoadMore && players.isNotEmpty ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index >= _players.length) {
-                return SizedBox(
-                  height: 80,
-                  child: const Center(
-                    child: Text(
-                      'Loading more...',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                );
-              }
-              return _buildPlayerRow(_players[index]);
-            },
+        // Sticky header
+        _buildTableHeader(),
+        // Scrollable content
+        Expanded(
+          child: Stack(
+            children: [
+              RefreshIndicator(
+                onRefresh: _refreshPlayers,
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  controller: _scrollController,
+                  itemCount:
+                      _players.length +
+                      (canLoadMore && players.isNotEmpty ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index >= _players.length) {
+                      return SizedBox(
+                        height: 80,
+                        child: const Center(
+                          child: Text(
+                            'Loading more...',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      );
+                    }
+                    return _buildPlayerRow(_players[index]);
+                  },
+                ),
+              ),
+              if (isLoading && !_isRefreshing && players.isEmpty)
+                const Center(child: CircularProgressIndicator()),
+            ],
           ),
         ),
-        if (isLoading && !_isRefreshing && players.isEmpty)
-          const Center(child: CircularProgressIndicator()),
       ],
     );
   }
 
-  String _formatPlayerName(String fullName) {
-    final parts = fullName.trim().split(' ');
-    if (parts.length == 1) return fullName;
-
-    final surname = parts.last;
-    final initials = parts
-        .sublist(0, parts.length - 1)
-        .map((part) => '${part[0].toUpperCase()}.')
-        .join(' ');
-
-    return '$initials $surname';
+  Widget _buildTableHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        border: Border(
+          bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Rank column header
+          const SizedBox(
+            width: 70,
+            child: Text('Rank', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          // Player column header
+          const Expanded(
+            child: Text(
+              'Player',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          // Weekly points column header
+          const SizedBox(
+            width: 70,
+            child: Text(
+              'Weekly',
+              textAlign: TextAlign.right,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          // Points column header
+          const SizedBox(
+            width: 80,
+            child: Text(
+              'Points',
+              textAlign: TextAlign.right,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildPlayerRow(Player player) {
@@ -189,6 +232,19 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
         ),
       ],
     );
+  }
+
+  String _formatPlayerName(String fullName) {
+    final parts = fullName.trim().split(' ');
+    if (parts.length == 1) return fullName;
+
+    final surname = parts.last;
+    final initials = parts
+        .sublist(0, parts.length - 1)
+        .map((part) => '${part[0].toUpperCase()}.')
+        .join(' ');
+
+    return '$initials $surname';
   }
 
   Future<void> _loadPlayers() async {
