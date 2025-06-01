@@ -16,12 +16,17 @@ class MacOSScrollBehavior extends MaterialScrollBehavior {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  await CountryFlagService().loadCountryFlags();
-  runApp(const MyApp());
+
+  final countryFlagService = CountryFlagService();
+  await countryFlagService.loadCountryFlags();
+
+  runApp(MyApp(countryFlagService: countryFlagService));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.countryFlagService});
+
+  final CountryFlagService countryFlagService;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +36,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const PlayerRankingPage(title: 'Tennis Court'),
+      home: PlayerRankingPage(
+        title: 'Tennis Court',
+        countryFlagService: countryFlagService,
+      ),
     );
   }
 }

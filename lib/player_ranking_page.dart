@@ -4,9 +4,14 @@ import 'package:tennis_court/services/player_service.dart';
 import 'package:tennis_court/services/country_flag_service.dart';
 
 class PlayerRankingPage extends StatefulWidget {
-  const PlayerRankingPage({super.key, required this.title});
+  const PlayerRankingPage({
+    super.key,
+    required this.title,
+    required this.countryFlagService,
+  });
 
   final String title;
+  final CountryFlagService countryFlagService;
 
   @override
   State<PlayerRankingPage> createState() => _PlayerRankingPageState();
@@ -148,7 +153,9 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   }
 
   Widget _buildPlayerRow(Player player) {
-    final flag = CountryFlagService().getFlagForCountry(player.countryAcr);
+    final flag = widget.countryFlagService.getFlagForCountry(
+      player.countryAcr,
+    );
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
