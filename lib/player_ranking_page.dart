@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tennis_court/player_model.dart';
 import 'package:tennis_court/services/player_service.dart';
 import 'package:tennis_court/services/country_flag_service.dart';
+import 'l10n/app_localizations.dart';
 
 class PlayerRankingPage extends StatefulWidget {
   const PlayerRankingPage({
@@ -85,10 +86,10 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
                     if (index >= _players.length) {
                       return SizedBox(
                         height: 80,
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Loading more...',
-                            style: TextStyle(color: Colors.grey),
+                            AppLocalizations.of(context)!.generalLoadingMore,
+                            style: const TextStyle(color: Colors.grey),
                           ),
                         ),
                       );
@@ -120,31 +121,34 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
           // Rank column header
           SizedBox(
             width: _rankColumnWidth,
-            child: Text('Rank', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              AppLocalizations.of(context)!.rankingHeaderRank,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           // Player column header
           Expanded(
             child: Text(
-              'Player',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              AppLocalizations.of(context)!.rankingHeaderPlayer,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
           // Weekly points column header
           SizedBox(
             width: _weeklyColumnWidth,
             child: Text(
-              'Weekly',
+              AppLocalizations.of(context)!.rankingHeaderWeekly,
               textAlign: TextAlign.right,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
           // Points column header
           SizedBox(
             width: _pointsColumnWidth,
             child: Text(
-              'Points',
+              AppLocalizations.of(context)!.rankingHeaderPoints,
               textAlign: TextAlign.right,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -153,9 +157,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   }
 
   Widget _buildPlayerRow(Player player) {
-    final flag = widget.countryFlagService.getFlagForCountry(
-      player.countryAcr,
-    );
+    final flag = widget.countryFlagService.getFlagForCountry(player.countryAcr);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -291,9 +293,14 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $error'),
+            content: Text(
+              AppLocalizations.of(context)!.generalError(error.toString()),
+            ),
             backgroundColor: Colors.red,
-            action: SnackBarAction(label: 'Retry', onPressed: _loadPlayers),
+            action: SnackBarAction(
+              label: AppLocalizations.of(context)!.generalRetry,
+              onPressed: _loadPlayers,
+            ),
           ),
         );
       }

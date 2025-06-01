@@ -1,0 +1,19 @@
+{
+  "appTitle": "Tennis Court",
+
+  "generalLoadingMore": "Loading more...",
+  "generalError": "Error: {message}",
+  "@generalError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "generalRetry": "Retry",
+
+  "rankingHeaderRank": "Rank",
+  "rankingHeaderPlayer": "Player",
+  "rankingHeaderWeekly": "Weekly", 
+  "rankingHeaderPoints": "Points"
+} 
