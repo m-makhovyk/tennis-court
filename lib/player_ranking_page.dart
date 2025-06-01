@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tennis_court/player_model.dart';
 import 'package:tennis_court/services/player_service.dart';
 import 'package:tennis_court/services/country_flag_service.dart';
+import 'package:tennis_court/widgets/ranking_type_toggle.dart';
 import 'l10n/app_localizations.dart';
 
 class PlayerRankingPage extends StatefulWidget {
@@ -29,6 +30,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   bool _isRefreshing = false;
   int _page = 0;
   final int _maxPage = 9; // API limited to 9 pages
+  RankingType _selectedRankingType = RankingType.atp;
 
   bool get canLoadMore => _page < _maxPage;
 
@@ -52,7 +54,18 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(widget.title),
+        title: RankingTypeToggle(
+          selectedType: _selectedRankingType,
+          onChanged: (RankingType newType) {
+            setState(() {
+              _selectedRankingType = newType;
+              _page = 0;
+              _players.clear();
+            });
+            _loadPlayers();
+          },
+        ),
+        centerTitle: true,
       ),
       body: Column(children: [Expanded(child: _buildPlayersList(_players))]),
     );
@@ -273,7 +286,10 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     });
 
     try {
-      final players = await _playerService.getPlayers(RankingType.atp, _page);
+      final players = await _playerService.getPlayers(
+        _selectedRankingType,
+        _page,
+      );
 
       setState(() {
         if (clearList) {
