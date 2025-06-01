@@ -10,10 +10,12 @@ class PlayerRankingPage extends StatefulWidget {
     super.key,
     required this.title,
     required this.countryFlagService,
+    required this.playerService,
   });
 
   final String title;
   final CountryFlagService countryFlagService;
+  final PlayerService playerService;
 
   @override
   State<PlayerRankingPage> createState() => _PlayerRankingPageState();
@@ -25,7 +27,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   static const double _pointsColumnWidth = 80;
 
   final List<Player> _players = [];
-  final PlayerService _playerService = PlayerService();
+
   bool isLoading = false;
   bool _isRefreshing = false;
   int _page = 0;
@@ -293,7 +295,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     });
 
     try {
-      final players = await _playerService.getPlayers(
+      final players = await widget.playerService.getPlayers(
         _selectedRankingType,
         _page,
       );

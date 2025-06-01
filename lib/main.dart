@@ -4,6 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tennis_court/player_ranking_page.dart';
 import 'package:tennis_court/services/country_flag_service.dart';
+import 'package:tennis_court/services/player_service.dart';
+import 'package:tennis_court/services/configuration_service.dart';
 import 'l10n/app_localizations.dart';
 
 class MacOSScrollBehavior extends MaterialScrollBehavior {
@@ -22,13 +24,26 @@ void main() async {
   final countryFlagService = CountryFlagService();
   await countryFlagService.loadCountryFlags();
 
-  runApp(MyApp(countryFlagService: countryFlagService));
+  final configurationService = ConfigurationService.instance;
+  await configurationService.fetchConfiguration();
+
+  runApp(
+    MyApp(
+      countryFlagService: countryFlagService,
+      playerService: PlayerService(configurationService),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.countryFlagService});
+  const MyApp({
+    super.key,
+    required this.countryFlagService,
+    required this.playerService,
+  });
 
   final CountryFlagService countryFlagService;
+  final PlayerService playerService;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +63,7 @@ class MyApp extends StatelessWidget {
       home: PlayerRankingPage(
         title: 'Tennis Court',
         countryFlagService: countryFlagService,
+        playerService: playerService,
       ),
     );
   }

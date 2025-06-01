@@ -10,11 +10,18 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:tennis_court/main.dart';
 import 'package:tennis_court/services/country_flag_service.dart';
+import 'package:tennis_court/services/player_service.dart';
+import 'package:tennis_court/services/configuration_service.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp(countryFlagService: CountryFlagService()));
+    await tester.pumpWidget(
+      MyApp(
+        countryFlagService: CountryFlagService(),
+        playerService: PlayerService(ConfigurationService.instance),
+      ),
+    );
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

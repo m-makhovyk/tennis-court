@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../player_model.dart';
+import 'configuration_service.dart';
 
 enum RankingType {
   atp('atp'),
@@ -13,6 +14,10 @@ enum RankingType {
 }
 
 class PlayerService {
+  final ConfigurationService _configurationService;
+
+  PlayerService(this._configurationService);
+
   static String get _baseUrl {
     final url = dotenv.env['MATCHSTAT_API_URL'];
     if (url == null || url.isEmpty) {
@@ -22,9 +27,13 @@ class PlayerService {
   }
 
   Future<List<Player>> getPlayers(RankingType type, int page) async {
+    final dateTime = _configurationService.lastUpdated;
+    final date =
+        '${dateTime.day.toString().padLeft(2, '0')}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.year}';
+
     final response = await http.get(
       Uri.parse(
-        '$_baseUrl/ranking/${type.rawValue}/?date=26.05.2025&group=singles&page=$page&includeAll=true',
+        '$_baseUrl/ranking/${type.rawValue}/?date=$date&group=singles&page=$page&includeAll=true',
       ),
     );
 
