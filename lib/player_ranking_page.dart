@@ -258,7 +258,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     return '$initials $surname';
   }
 
-  Future<void> _loadPlayers() async {
+  Future<void> _loadPlayers({bool clearList = false}) async {
     setState(() {
       isLoading = true;
     });
@@ -267,6 +267,9 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
       final players = await _playerService.getPlayers(_page);
 
       setState(() {
+        if (clearList) {
+          _players.clear();
+        }
         _players.addAll(players);
         isLoading = false;
         _isRefreshing = false;
@@ -293,10 +296,9 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   Future<void> _refreshPlayers() async {
     setState(() {
       _page = 0;
-      _players.clear();
       _isRefreshing = true;
     });
-    await _loadPlayers();
+    await _loadPlayers(clearList: true);
   }
 
   void _onScroll() {
