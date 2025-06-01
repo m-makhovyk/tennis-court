@@ -171,6 +171,13 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
 
   Widget _buildPlayerRow(Player player) {
     final flag = widget.countryFlagService.getFlagForCountry(player.countryAcr);
+    final points = _selectedRankingType == RankingType.atp
+        ? player.points.toInt()
+        : (player.points / 100).toInt();
+
+    final int weeklyPoints = _selectedRankingType == RankingType.atp
+        ? player.weeklyPoints.toInt()
+        : (player.weeklyPoints / 100).toInt();
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -213,15 +220,15 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
           SizedBox(
             width: _weeklyColumnWidth,
             child: Text(
-              player.weeklyPoints == 0
+              weeklyPoints == 0
                   ? ''
-                  : (player.weeklyPoints > 0
-                        ? '+${player.weeklyPoints}'
-                        : '${player.weeklyPoints}'),
+                  : (weeklyPoints > 0
+                        ? '+$weeklyPoints'
+                        : weeklyPoints.toString()),
               textAlign: TextAlign.right,
               style: TextStyle(
                 fontSize: 14,
-                color: player.weeklyPoints >= 0 ? Colors.green : Colors.red,
+                color: weeklyPoints >= 0 ? Colors.green : Colors.red,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -230,7 +237,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
           SizedBox(
             width: _pointsColumnWidth,
             child: Text(
-              '${player.points}',
+              points.toString(),
               textAlign: TextAlign.right,
               style: Theme.of(context).textTheme.titleMedium,
             ),
