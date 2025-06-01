@@ -105,7 +105,11 @@ class SegmentedToggle<T extends Enum> extends StatelessWidget {
     required bool isSelected,
   }) {
     return GestureDetector(
-      onTap: () => onChanged(value),
+      onTap: () {
+        if (value != selectedValue) {
+          onChanged(value);
+        }
+      },
       behavior: HitTestBehavior.opaque,
       child: Container(
         width: width,
