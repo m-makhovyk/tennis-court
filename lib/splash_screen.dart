@@ -16,8 +16,10 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   String? _status;
   bool _hasError = false;
-  String? _errorMessage;
   bool _hasInitialized = false;
+  bool _isReady = false;
+  PlayerService? _playerService;
+  CountryFlagService? _countryFlagService;
 
   @override
   void initState() {
@@ -38,7 +40,6 @@ class _SplashScreenState extends State<SplashScreen> {
       setState(() {
         _status = AppLocalizations.of(context)!.splashFetchingConfiguration;
         _hasError = false;
-        _errorMessage = null;
       });
 
       await dotenv.load(fileName: ".env");
@@ -55,30 +56,32 @@ class _SplashScreenState extends State<SplashScreen> {
       );
       final playerService = PlayerService(configurationService);
 
-      // Small delay for smooth transition
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => PlayerRankingPage(
-              title: AppLocalizations.of(context)!.appTitle,
-              countryFlagService: countryFlagService,
-              playerService: playerService,
-            ),
-          ),
-        );
-      }
+      setState(() {
+        _isReady = true;
+        _playerService = playerService;
+        _countryFlagService = countryFlagService;
+      });
     } catch (error) {
       setState(() {
         _hasError = true;
-        _errorMessage = error.toString();
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isReady) {
+      return PlayerRankingPage(
+        title: AppLocalizations.of(context)!.appTitle,
+        countryFlagService: _countryFlagService!,
+        playerService: _playerService!,
+      );
+    }
+
+    return _buildSplashContent(context);
+  }
+
+  Widget _buildSplashContent(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
