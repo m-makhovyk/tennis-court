@@ -4,6 +4,14 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../player_model.dart';
 
+enum RankingType {
+  atp('atp'),
+  wta('wta');
+
+  const RankingType(this.rawValue);
+  final String rawValue;
+}
+
 class PlayerService {
   static String get _baseUrl {
     final url = dotenv.env['MATCHSTAT_API_URL'];
@@ -13,10 +21,10 @@ class PlayerService {
     return url;
   }
 
-  Future<List<Player>> getPlayers(int page) async {
+  Future<List<Player>> getPlayers(RankingType type, int page) async {
     final response = await http.get(
       Uri.parse(
-        '$_baseUrl/ranking/atp/?date=26.05.2025&group=singles&page=$page&includeAll=true',
+        '$_baseUrl/ranking/${type.rawValue}/?date=26.05.2025&group=singles&page=$page&includeAll=true',
       ),
     );
 

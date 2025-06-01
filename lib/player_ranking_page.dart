@@ -273,7 +273,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     });
 
     try {
-      final players = await _playerService.getPlayers(_page);
+      final players = await _playerService.getPlayers(RankingType.atp, _page);
 
       setState(() {
         if (clearList) {
