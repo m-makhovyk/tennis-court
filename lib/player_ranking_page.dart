@@ -120,6 +120,23 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
               ],
             ),
           ),
+          // Weekly points column
+          SizedBox(
+            width: 70,
+            child: Text(
+              player.weeklyPoints == 0
+                  ? ''
+                  : (player.weeklyPoints > 0
+                        ? '+${player.weeklyPoints}'
+                        : '${player.weeklyPoints}'),
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 14,
+                color: player.weeklyPoints >= 0 ? Colors.green : Colors.red,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
           // Points column
           SizedBox(
             width: 80,
