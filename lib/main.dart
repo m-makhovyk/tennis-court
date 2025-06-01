@@ -1,11 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:tennis_court/player_ranking_page.dart';
-import 'package:tennis_court/services/country_flag_service.dart';
-import 'package:tennis_court/services/player_service.dart';
-import 'package:tennis_court/services/configuration_service.dart';
+import 'package:tennis_court/splash_screen.dart';
 import 'l10n/app_localizations.dart';
 
 class MacOSScrollBehavior extends MaterialScrollBehavior {
@@ -19,36 +15,17 @@ class MacOSScrollBehavior extends MaterialScrollBehavior {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
 
-  final countryFlagService = CountryFlagService();
-  await countryFlagService.loadCountryFlags();
-
-  final configurationService = ConfigurationService.instance;
-  await configurationService.fetchConfiguration();
-
-  runApp(
-    MyApp(
-      countryFlagService: countryFlagService,
-      playerService: PlayerService(configurationService),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({
-    super.key,
-    required this.countryFlagService,
-    required this.playerService,
-  });
-
-  final CountryFlagService countryFlagService;
-  final PlayerService playerService;
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Tennis Court',
       scrollBehavior: MacOSScrollBehavior(),
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -60,11 +37,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: PlayerRankingPage(
-        title: 'Tennis Court',
-        countryFlagService: countryFlagService,
-        playerService: playerService,
-      ),
+      home: const SplashScreen(),
     );
   }
 }
