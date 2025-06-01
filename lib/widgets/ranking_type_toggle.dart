@@ -26,7 +26,7 @@ class RankingTypeToggle extends StatelessWidget {
             AnimatedAlign(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              alignment: selectedType == RankingType.atp
+              alignment: selectedType == RankingType.values.first
                   ? Alignment.centerLeft
                   : Alignment.centerRight,
               child: Container(
@@ -48,17 +48,12 @@ class RankingTypeToggle extends StatelessWidget {
             ),
             Row(
               children: [
-                _buildToggleOption(
-                  context,
-                  RankingType.atp,
-                  'ATP',
-                  isSelected: selectedType == RankingType.atp,
-                ),
-                _buildToggleOption(
-                  context,
-                  RankingType.wta,
-                  'WTA',
-                  isSelected: selectedType == RankingType.wta,
+                ...RankingType.values.map(
+                  (type) => _buildToggleOption(
+                    context,
+                    type,
+                    isSelected: selectedType == type,
+                  ),
                 ),
               ],
             ),
@@ -70,8 +65,7 @@ class RankingTypeToggle extends StatelessWidget {
 
   Widget _buildToggleOption(
     BuildContext context,
-    RankingType type,
-    String label, {
+    RankingType type, {
     required bool isSelected,
   }) {
     return GestureDetector(
@@ -82,7 +76,7 @@ class RankingTypeToggle extends StatelessWidget {
         height: 44,
         alignment: Alignment.center,
         child: Text(
-          label,
+          type.rawValue.toUpperCase(),
           style: TextStyle(
             color: isSelected
                 ? Theme.of(context).colorScheme.onPrimary
