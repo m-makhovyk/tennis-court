@@ -84,32 +84,53 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     final flag = CountryFlagService().getFlagForCountry(player.countryAcr);
 
     return ListTile(
-      leading: SizedBox(
-        width: 70,
-        child: Row(
-          children: [
-            Text(
-              player.rank.toString(),
+      title: Row(
+        children: [
+          // Rank column
+          SizedBox(
+            width: 70,
+            child: Row(
+              children: [
+                Text(
+                  player.rank.toString(),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child:
+                      _buildRankChangeWidget(player.weeklyPositionChange) ??
+                      const SizedBox(),
+                ),
+              ],
+            ),
+          ),
+          // Player info column
+          Expanded(
+            child: Row(
+              children: [
+                Text(flag, style: const TextStyle(fontSize: 28)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    player.name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Points column
+          SizedBox(
+            width: 80,
+            child: Text(
+              '${player.points}',
+              textAlign: TextAlign.right,
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child:
-                  _buildRankChangeWidget(player.weeklyPositionChange) ??
-                  const SizedBox(),
-            ),
-          ],
-        ),
-      ),
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(flag, style: const TextStyle(fontSize: 28)),
-          const SizedBox(width: 8),
-          Text(player.name, style: Theme.of(context).textTheme.titleMedium),
+          ),
         ],
       ),
-      subtitle: Text('Points: ${player.points}'),
     );
   }
 
