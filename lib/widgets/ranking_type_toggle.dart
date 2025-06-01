@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
 import '../services/player_service.dart';
 
-class RankingTypeToggle extends StatelessWidget {
-  const RankingTypeToggle({
+class SegmentedToggle<T extends Enum> extends StatelessWidget {
+  const SegmentedToggle({
     super.key,
-    required this.selectedType,
+    required this.values,
+    required this.selectedValue,
     required this.onChanged,
+    required this.labelBuilder,
   });
 
-  final RankingType selectedType;
-  final ValueChanged<RankingType> onChanged;
+  final List<T> values;
+  final T selectedValue;
+  final ValueChanged<T> onChanged;
+  final String Function(T) labelBuilder;
 
   @override
   Widget build(BuildContext context) {
+    final optionWidth = 70.0;
+    final totalWidth = optionWidth * values.length;
+    final selectedIndex = values.indexOf(selectedValue);
+
+    // Calculate alignment: -1.0 (left) to 1.0 (right)
+    final alignment = values.length == 1
+        ? Alignment.center
+        : Alignment(-1.0 + (2.0 * selectedIndex / (values.length - 1)), 0.0);
+
     return SizedBox(
-      width: 140,
+      width: totalWidth,
       child: Container(
         height: 44,
         decoration: BoxDecoration(
@@ -26,11 +39,9 @@ class RankingTypeToggle extends StatelessWidget {
             AnimatedAlign(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              alignment: selectedType == RankingType.values.first
-                  ? Alignment.centerLeft
-                  : Alignment.centerRight,
+              alignment: alignment,
               child: Container(
-                width: 68,
+                width: optionWidth - 4,
                 height: 40,
                 margin: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
@@ -48,11 +59,12 @@ class RankingTypeToggle extends StatelessWidget {
             ),
             Row(
               children: [
-                ...RankingType.values.map(
-                  (type) => _buildToggleOption(
+                ...values.map(
+                  (value) => _buildToggleOption(
                     context,
-                    type,
-                    isSelected: selectedType == type,
+                    value,
+                    optionWidth,
+                    isSelected: selectedValue == value,
                   ),
                 ),
               ],
@@ -65,18 +77,19 @@ class RankingTypeToggle extends StatelessWidget {
 
   Widget _buildToggleOption(
     BuildContext context,
-    RankingType type, {
+    T value,
+    double width, {
     required bool isSelected,
   }) {
     return GestureDetector(
-      onTap: () => onChanged(type),
+      onTap: () => onChanged(value),
       behavior: HitTestBehavior.opaque,
       child: Container(
-        width: 70,
+        width: width,
         height: 44,
         alignment: Alignment.center,
         child: Text(
-          type.rawValue.toUpperCase(),
+          labelBuilder(value),
           style: TextStyle(
             color: isSelected
                 ? Theme.of(context).colorScheme.onPrimary
@@ -86,6 +99,28 @@ class RankingTypeToggle extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+// Convenience wrapper for RankingType
+class RankingTypeToggle extends StatelessWidget {
+  const RankingTypeToggle({
+    super.key,
+    required this.selectedType,
+    required this.onChanged,
+  });
+
+  final RankingType selectedType;
+  final ValueChanged<RankingType> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedToggle<RankingType>(
+      values: RankingType.values,
+      selectedValue: selectedType,
+      onChanged: onChanged,
+      labelBuilder: (type) => type.rawValue.toUpperCase(),
     );
   }
 }
