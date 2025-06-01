@@ -12,7 +12,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Tennis Court';
 
   @override
+  String get generalLoading => 'Loading...';
+
+  @override
   String get generalLoadingMore => 'Loading more...';
+
+  @override
+  String get generalSomethingWentWrong => 'Something went wrong';
 
   @override
   String generalError(String message) {
@@ -21,6 +27,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generalRetry => 'Retry';
+
+  @override
+  String get splashFetchingConfiguration => 'Fetching configuration...';
+
+  @override
+  String get splashInitializingServices => 'Initializing services...';
+
+  @override
+  String splashFailedToLoad(String error) {
+    return 'Failed to load: $error';
+  }
 
   @override
   String get rankingHeaderRank => 'Rank';

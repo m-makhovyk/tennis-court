@@ -100,11 +100,23 @@ abstract class AppLocalizations {
   /// **'Tennis Court'**
   String get appTitle;
 
+  /// No description provided for @generalLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get generalLoading;
+
   /// No description provided for @generalLoadingMore.
   ///
   /// In en, this message translates to:
   /// **'Loading more...'**
   String get generalLoadingMore;
+
+  /// No description provided for @generalSomethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get generalSomethingWentWrong;
 
   /// No description provided for @generalError.
   ///
@@ -117,6 +129,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get generalRetry;
+
+  /// No description provided for @splashFetchingConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching configuration...'**
+  String get splashFetchingConfiguration;
+
+  /// No description provided for @splashInitializingServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing services...'**
+  String get splashInitializingServices;
+
+  /// No description provided for @splashFailedToLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load: {error}'**
+  String splashFailedToLoad(String error);
 
   /// No description provided for @rankingHeaderRank.
   ///

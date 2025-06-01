@@ -4,6 +4,7 @@ import 'package:tennis_court/player_ranking_page.dart';
 import 'package:tennis_court/services/country_flag_service.dart';
 import 'package:tennis_court/services/player_service.dart';
 import 'package:tennis_court/services/configuration_service.dart';
+import 'package:tennis_court/l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,27 +14,46 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  String _status = 'Loading...';
+  String? _status;
   bool _hasError = false;
+  String? _errorMessage;
+  bool _hasInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _initializeApp();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_hasInitialized) {
+      _hasInitialized = true;
+      _initializeApp();
+    }
   }
 
   Future<void> _initializeApp() async {
     try {
+      setState(() {
+        _status = AppLocalizations.of(context)!.splashFetchingConfiguration;
+        _hasError = false;
+        _errorMessage = null;
+      });
+
       await dotenv.load(fileName: ".env");
 
       final countryFlagService = CountryFlagService();
       await countryFlagService.loadCountryFlags();
 
-      setState(() => _status = 'Fetching configuration...');
-      await ConfigurationService.instance.fetchConfiguration();
+      final configurationService = ConfigurationService.instance;
+      await configurationService.fetchConfiguration();
 
-      setState(() => _status = 'Initializing services...');
-      final playerService = PlayerService(ConfigurationService.instance);
+      setState(
+        () =>
+            _status = AppLocalizations.of(context)!.splashInitializingServices,
+      );
+      final playerService = PlayerService(configurationService);
 
       // Small delay for smooth transition
       await Future.delayed(const Duration(milliseconds: 500));
@@ -42,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => PlayerRankingPage(
-              title: 'Tennis Court',
+              title: AppLocalizations.of(context)!.appTitle,
               countryFlagService: countryFlagService,
               playerService: playerService,
             ),
@@ -52,13 +72,15 @@ class _SplashScreenState extends State<SplashScreen> {
     } catch (error) {
       setState(() {
         _hasError = true;
-        _status = 'Failed to load: $error';
+        _errorMessage = error.toString();
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -71,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Tennis Court',
+              localizations.appTitle,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
@@ -83,7 +105,9 @@ class _SplashScreenState extends State<SplashScreen> {
               const SizedBox(height: 16),
             ],
             Text(
-              _status,
+              _hasError
+                  ? localizations.generalSomethingWentWrong
+                  : (_status ?? localizations.generalLoading),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: _hasError ? Colors.red : null,
               ),
@@ -92,11 +116,8 @@ class _SplashScreenState extends State<SplashScreen> {
             if (_hasError) ...[
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
-                  setState(() => _hasError = false);
-                  _initializeApp();
-                },
-                child: const Text('Retry'),
+                onPressed: _initializeApp,
+                child: Text(localizations.generalRetry),
               ),
             ],
           ],

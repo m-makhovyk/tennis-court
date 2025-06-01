@@ -1,7 +1,9 @@
 {
   "appTitle": "Tennis Court",
 
+  "generalLoading": "Loading...",
   "generalLoadingMore": "Loading more...",
+  "generalSomethingWentWrong": "Something went wrong",
   "generalError": "Error: {message}",
   "@generalError": {
     "placeholders": {
@@ -11,6 +13,17 @@
     }
   },
   "generalRetry": "Retry",
+
+  "splashFetchingConfiguration": "Fetching configuration...",
+  "splashInitializingServices": "Initializing services...",
+  "splashFailedToLoad": "Failed to load: {error}",
+  "@splashFailedToLoad": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
 
   "rankingHeaderRank": "Rank",
   "rankingHeaderPlayer": "Player",
