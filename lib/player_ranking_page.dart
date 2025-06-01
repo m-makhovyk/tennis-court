@@ -150,8 +150,9 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
   Widget _buildPlayerRow(Player player) {
     final flag = CountryFlagService().getFlagForCountry(player.countryAcr);
 
-    return ListTile(
-      title: Row(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      child: Row(
         children: [
           // Rank column
           SizedBox(
@@ -162,7 +163,6 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
                   player.rank.toString(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                const SizedBox(width: 10),
                 Expanded(
                   child:
                       _buildRankChangeWidget(player.weeklyPositionChange) ??
