@@ -63,12 +63,19 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
             children: [
               RefreshIndicator(
                 onRefresh: _refreshPlayers,
-                child: ListView.builder(
+                child: ListView.separated(
                   physics: const AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
                   itemCount:
                       _players.length +
-                      (canLoadMore && players.isNotEmpty ? 1 : 0),
+                      (canLoadMore && _players.isNotEmpty ? 1 : 0),
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    thickness: 0.5,
+                    color: Theme.of(
+                      context,
+                    ).dividerColor.withValues(alpha: 0.3),
+                  ),
                   itemBuilder: (context, index) {
                     if (index >= _players.length) {
                       return SizedBox(
