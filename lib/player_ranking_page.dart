@@ -13,6 +13,10 @@ class PlayerRankingPage extends StatefulWidget {
 }
 
 class _PlayerRankingPageState extends State<PlayerRankingPage> {
+  static const double _rankColumnWidth = 70;
+  static const double _weeklyColumnWidth = 70;
+  static const double _pointsColumnWidth = 80;
+
   final List<Player> _players = [];
   final PlayerService _playerService = PlayerService();
   bool isLoading = false;
@@ -102,20 +106,20 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
       child: Row(
         children: [
           // Rank column header
-          const SizedBox(
-            width: 70,
+          SizedBox(
+            width: _rankColumnWidth,
             child: Text('Rank', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
           // Player column header
-          const Expanded(
+          Expanded(
             child: Text(
               'Player',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
           // Weekly points column header
-          const SizedBox(
-            width: 70,
+          SizedBox(
+            width: _weeklyColumnWidth,
             child: Text(
               'Weekly',
               textAlign: TextAlign.right,
@@ -123,8 +127,8 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
             ),
           ),
           // Points column header
-          const SizedBox(
-            width: 80,
+          SizedBox(
+            width: _pointsColumnWidth,
             child: Text(
               'Points',
               textAlign: TextAlign.right,
@@ -144,7 +148,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
         children: [
           // Rank column
           SizedBox(
-            width: 70,
+            width: _rankColumnWidth,
             child: Row(
               children: [
                 Text(
@@ -178,7 +182,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
           ),
           // Weekly points column
           SizedBox(
-            width: 70,
+            width: _weeklyColumnWidth,
             child: Text(
               player.weeklyPoints == 0
                   ? ''
@@ -195,7 +199,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
           ),
           // Points column
           SizedBox(
-            width: 80,
+            width: _pointsColumnWidth,
             child: Text(
               '${player.points}',
               textAlign: TextAlign.right,
