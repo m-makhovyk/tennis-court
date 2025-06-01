@@ -1,10 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../player_model.dart';
 
 class PlayerService {
-  static const String _baseUrl = 'https://matchstat.com/tennis/api2';
+  static String get _baseUrl {
+    final url = dotenv.env['MATCHSTAT_API_URL'];
+    if (url == null || url.isEmpty) {
+      throw Exception('env is not configured');
+    }
+    return url;
+  }
 
   Future<List<Player>> getPlayers(int page) async {
     final response = await http.get(
