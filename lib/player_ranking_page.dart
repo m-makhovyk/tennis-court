@@ -216,7 +216,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    _formatPlayerName(player.name),
+                    player.formattedName,
                     style: Theme.of(context).textTheme.titleMedium,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -280,19 +280,6 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
         ),
       ],
     );
-  }
-
-  String _formatPlayerName(String fullName) {
-    final parts = fullName.trim().split(' ');
-    if (parts.length == 1) return fullName;
-
-    final surname = parts.last;
-    final initials = parts
-        .sublist(0, parts.length - 1)
-        .map((part) => '${part[0].toUpperCase()}.')
-        .join(' ');
-
-    return '$initials $surname';
   }
 
   // MARK: - Data Loading Methods

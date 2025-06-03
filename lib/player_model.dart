@@ -17,6 +17,19 @@ class Player {
     required this.weeklyPositionChange,
   });
 
+  String get formattedName {
+    final parts = name.trim().split(' ');
+    if (parts.length == 1) return name;
+
+    final surname = parts.last;
+    final initials = parts
+        .sublist(0, parts.length - 1)
+        .map((part) => '${part[0].toUpperCase()}.')
+        .join(' ');
+
+    return '$initials $surname';
+  }
+
   factory Player.fromJson(Map<String, dynamic> json) {
     return Player(
       id: json['player']['id'],
