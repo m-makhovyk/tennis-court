@@ -99,15 +99,7 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
                   ),
                   itemBuilder: (context, index) {
                     if (index >= _players.length) {
-                      return SizedBox(
-                        height: 80,
-                        child: Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.generalLoadingMore,
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                      );
+                      return _buildLoadingMoreWidget();
                     }
                     return _buildPlayerRow(_players[index]);
                   },
@@ -167,6 +159,18 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingMoreWidget() {
+    return SizedBox(
+      height: 80,
+      child: Center(
+        child: Text(
+          AppLocalizations.of(context)!.generalLoadingMore,
+          style: const TextStyle(color: Colors.grey),
+        ),
       ),
     );
   }
