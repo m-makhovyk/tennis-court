@@ -73,6 +73,8 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
     );
   }
 
+  // MARK: - Widget Building Methods
+
   Widget _buildPlayersList(List<Player> players) {
     return Column(
       children: [
@@ -292,6 +294,8 @@ class _PlayerRankingPageState extends State<PlayerRankingPage> {
 
     return '$initials $surname';
   }
+
+  // MARK: - Data Loading Methods
 
   Future<void> _loadPlayers({bool clearList = false}) async {
     setState(() {
